@@ -417,7 +417,7 @@ function HrDashboard() {
       </main>
       
       {isMarkingModalOpen && (
-         <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+         <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-md">
                 <h2 className="text-xl font-bold mb-2 text-slate-800 dark:text-slate-200">Mark Attendance</h2>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">For {selectedEmployee?.email} on {selectedDate}</p>
@@ -470,7 +470,7 @@ function HrDashboard() {
       )}
       
       {isLeaveModalOpen && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6 text-slate-800 dark:text-slate-200">Apply for Leave</h2>
             <form onSubmit={handleLeaveSubmit}>
@@ -495,7 +495,7 @@ function HrDashboard() {
       )}
       
       {isExpenseModalOpen && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6 text-slate-800 dark:text-slate-200">Submit Expense Claim</h2>
             <form onSubmit={handleSubmitExpense}>
@@ -518,7 +518,7 @@ function HrDashboard() {
       )}
 
       {isExpenseDetailsModalOpen && selectedExpense && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Expense Details</h2>
             <div className="space-y-3 text-slate-800 dark:text-slate-300">
@@ -598,7 +598,7 @@ const AnalysisModal = ({ employee, onClose }) => {
     setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + delta, 1));
   };
   return (
-    <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-5xl">
         <div className="flex justify-between items-center mb-4">
           <div>

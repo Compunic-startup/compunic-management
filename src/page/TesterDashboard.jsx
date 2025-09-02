@@ -410,7 +410,7 @@ function TesterDashboard() {
       </main>
       
       {isModalOpen && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6">Raise a New Token</h2>
             <form onSubmit={handleRaiseTokenSubmit}>
@@ -442,7 +442,7 @@ function TesterDashboard() {
       )}
       
       {isLeaveModalOpen && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6">Apply for Leave</h2>
             <form onSubmit={handleLeaveSubmit}>
@@ -467,7 +467,7 @@ function TesterDashboard() {
       )}
 
       {isExpenseModalOpen && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6">Submit Expense Claim</h2>
             <form onSubmit={handleSubmitExpense}>
@@ -490,7 +490,7 @@ function TesterDashboard() {
       )}
 
       {isDetailsModalOpen && selectedToken && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-2xl">
             <h2 className="text-xl font-bold mb-1 text-slate-800 dark:text-slate-200">Token Details</h2>
             <p className="font-mono text-sm text-slate-500 dark:text-slate-400 mb-4">{selectedToken.ticketId}</p>
