@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <script>
+      // Redirect all 404s to index.html while keeping the path
+      const redirectTo = window.location.protocol + "//" + window.location.host + "/compunic-management/index.html" + window.location.search + window.location.hash;
+      window.location.replace(redirectTo);
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>
