@@ -46,12 +46,12 @@ function App() {
           <Route 
             path="/tester" 
             element={
-              <ProtectedRoute allowedRoles={['admin', 'developer', 'tester']}>
+              <ProtectedRoute allowedRoles={['admin', 'tester']}>
                 <TesterDashboard />
               </ProtectedRoute>
             } 
           />
-          <Route path="/hr" element={ <ProtectedRoute allowedRoles={['hr']}> <HrDashboard /> </ProtectedRoute> } />
+          <Route path="/hr" element={ <ProtectedRoute allowedRoles={['admin','hr']}> <HrDashboard /> </ProtectedRoute> } />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
