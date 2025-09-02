@@ -20,41 +20,41 @@ const timeAgo = (date) => {
   return `${days}d ago`;
 };
 
-// --- Helper Components ---
+// --- Helper Components with Dark Mode ---
 const StatCard = ({ title, value, icon }) => (
-  <div className="bg-white p-6 rounded-xl shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-    <div className="bg-indigo-100 p-3 rounded-full">{icon}</div>
+  <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+    <div className="bg-indigo-100 dark:bg-indigo-900/50 p-3 rounded-full">{icon}</div>
     <div>
-      <h3 className="text-sm font-medium text-slate-500">{title}</h3>
-      <p className="mt-1 text-2xl font-semibold text-slate-900">{value}</p>
+      <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</h3>
+      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">{value}</p>
     </div>
   </div>
 );
 
 const StatusBadge = ({ status }) => {
   const statusClasses = {
-    'Open': 'bg-blue-100 text-blue-800',
-    'Resolved': 'bg-green-100 text-green-800',
-    'Closed': 'bg-slate-100 text-slate-600',
-    'Pending': 'bg-amber-100 text-amber-800',
-    'Approved': 'bg-green-100 text-green-800',
-    'Rejected': 'bg-red-100 text-red-800',
+    'Open': 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
+    'Resolved': 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+    'Closed': 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
+    'Pending': 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300',
+    'Approved': 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+    'Rejected': 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
   };
-  return <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${statusClasses[status] || 'bg-slate-100 text-slate-800'}`}>{status}</span>;
+  return <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${statusClasses[status] || 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300'}`}>{status}</span>;
 };
 
 const TaskStatusBadge = ({ task }) => {
     if (task.status === 'Done') {
-        return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Done</span>;
+        return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Done</span>;
     }
     const now = new Date();
     const deadlineDate = new Date(task.deadline + 'T00:00:00');
     now.setHours(0,0,0,0);
     const isOverdue = deadlineDate < now;
     if (isOverdue) {
-        return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Overdue</span>;
+        return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">Overdue</span>;
     }
-    return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Assigned</span>;
+    return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">Assigned</span>;
 };
 
 function TesterDashboard() {
@@ -185,7 +185,7 @@ function TesterDashboard() {
 
   const handleLeaveSubmit = async (e) => {
     e.preventDefault();
-    if (!leaveReason.trim()) { setLeaveError("A reason is required."); return; }
+    if (!leaveReason.trim()) { setLeaveError("A reason for leave is required."); return; }
     setLeaveError(''); setIsSubmitting(true);
     try {
       await addDoc(collection(db, "leaveRequests"), {
@@ -236,13 +236,13 @@ function TesterDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <header className="bg-white shadow-md sticky top-0 z-10">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div>
-              <h1 className="text-lg font-bold text-slate-800">Tester Dashboard</h1>
-              <p className="text-xs text-slate-500">{currentUser?.email}</p>
+              <h1 className="text-lg font-bold">Tester Dashboard</h1>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{currentUser?.email}</p>
             </div>
             <div className="flex items-center space-x-2">
               <button onClick={() => setIsModalOpen(true)} className="px-3 py-2 text-sm font-semibold text-white bg-indigo-500 rounded-lg shadow-sm hover:bg-indigo-600">Raise Token</button>
@@ -263,52 +263,52 @@ function TesterDashboard() {
           <StatCard title="Closed" value={tokens.filter(t => t.status === 'Closed').length} icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>} />
         </div>
         
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold mb-4 text-slate-800">All Tokens</h2>
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold mb-4">All Tokens</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-            <input type="text" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="p-2 border border-slate-300 rounded-md w-full" />
-            <select className="p-2 border border-slate-300 rounded-md w-full" value={filterDeveloper} onChange={e => setFilterDeveloper(e.target.value)}>
+            <input type="text" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="p-2 border border-slate-300 dark:border-slate-600 rounded-md w-full bg-white dark:bg-slate-700" />
+            <select className="p-2 border border-slate-300 dark:border-slate-600 rounded-md w-full bg-white dark:bg-slate-700" value={filterDeveloper} onChange={e => setFilterDeveloper(e.target.value)}>
               <option value="all">All Developers</option>
               {developers.map(dev => (<option key={dev.id} value={dev.email}>{dev.email}</option>))}
             </select>
-            <select className="p-2 border border-slate-300 rounded-md w-full" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+            <select className="p-2 border border-slate-300 dark:border-slate-600 rounded-md w-full bg-white dark:bg-slate-700" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
               <option value="all">All Statuses</option> <option value="Open">Open</option>
               <option value="Resolved">Resolved</option> <option value="Closed">Closed</option>
             </select>
-            <input type="date" className="p-2 border border-slate-300 rounded-md w-full" value={filterDate} onChange={e => setFilterDate(e.target.value)} />
+            <input type="date" className="p-2 border border-slate-300 dark:border-slate-600 rounded-md w-full bg-white dark:bg-slate-700" value={filterDate} onChange={e => setFilterDate(e.target.value)} />
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
+            <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+              <thead className="bg-slate-50 dark:bg-slate-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Ticket</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Assigned To</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Age</th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Ticket</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Assigned To</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Age</th>
+                  <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-slate-200">
-                {loading && <tr><td colSpan="5" className="text-center py-4 text-slate-500">Loading...</td></tr>}
+              <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                {loading && <tr><td colSpan="5" className="text-center py-4 text-slate-500 dark:text-slate-400">Loading...</td></tr>}
                 {!loading && filteredTokens.map((token) => (
-                  <tr key={token.id} onClick={() => openDetailsModal(token)} className="hover:bg-slate-50 cursor-pointer">
+                  <tr key={token.id} onClick={() => openDetailsModal(token)} className="hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer">
                     <td className="px-6 py-4">
-                      <p className="font-mono text-sm text-slate-600">{token.ticketId}</p>
-                      <p className="text-sm text-slate-800 font-medium truncate max-w-xs">{token.description}</p>
+                      <p className="font-mono text-sm text-slate-600 dark:text-slate-400">{token.ticketId}</p>
+                      <p className="text-sm font-medium truncate max-w-xs">{token.description}</p>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-500">{token.assignedDeveloper}</td>
+                    <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{token.assignedDeveloper}</td>
                     <td className="px-6 py-4"><StatusBadge status={token.status} /></td>
-                    <td className="px-6 py-4 text-sm text-slate-500">{timeAgo(token.createdAt.toDate())}</td>
+                    <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{timeAgo(token.createdAt.toDate())}</td>
                     <td className="px-6 py-4 text-center">
                       <div onClick={e => e.stopPropagation()} className="flex justify-center space-x-2">
                         {token.status === 'Resolved' && (
                           <>
-                            <button onClick={() => handleTokenStatusUpdate(token.id, 'Closed')} className="font-semibold text-green-600 hover:text-green-800">Close</button>
-                            <button onClick={() => handleTokenStatusUpdate(token.id, 'Open')} className="font-semibold text-red-600 hover:text-red-800">Re-open</button>
+                            <button onClick={() => handleTokenStatusUpdate(token.id, 'Closed')} className="font-semibold text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200">Close</button>
+                            <button onClick={() => handleTokenStatusUpdate(token.id, 'Open')} className="font-semibold text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200">Re-open</button>
                           </>
                         )}
                         {token.status === 'Closed' && (
-                          <button onClick={() => handleReraiseClick(token)} className="font-semibold text-indigo-600 hover:text-indigo-800">Re-raise</button>
+                          <button onClick={() => handleReraiseClick(token)} className="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200">Re-raise</button>
                         )}
                       </div>
                     </td>
@@ -319,54 +319,54 @@ function TesterDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">My Assigned Tasks</h2>
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold mb-4">My Assigned Tasks</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
+            <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+              <thead className="bg-slate-50 dark:bg-slate-700">
                 <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Task</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Assigned By</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Deadline</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Action</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Task</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Assigned By</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Deadline</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Status</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Action</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-slate-200">
+              <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                 {myTasks.map((task) => (
                     <tr key={task.id}>
                         <td className="px-6 py-4 text-sm max-w-md truncate">{task.description}</td>
-                        <td className="px-6 py-4 text-sm text-slate-500">{task.assignedBy}</td>
+                        <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{task.assignedBy}</td>
                         <td className="px-6 py-4 text-sm font-mono">{task.deadline}</td>
                         <td className="px-6 py-4"><TaskStatusBadge task={task} /></td>
                         <td className="px-6 py-4 text-center">
                           {task.status !== 'Done' && (
-                            <button onClick={() => handleMarkTaskDone(task)} className="px-3 py-1 text-sm font-semibold text-green-700 bg-green-100 rounded-md hover:bg-green-200">
+                            <button onClick={() => handleMarkTaskDone(task)} className="px-3 py-1 text-sm font-semibold text-green-700 bg-green-100 dark:bg-green-900/50 dark:text-green-300 rounded-md hover:bg-green-200 dark:hover:bg-green-900/80">
                               Mark as Done
                             </button>
                           )}
                         </td>
                     </tr>
                 ))}
-                {myTasks.length === 0 && (<tr><td colSpan="5" className="text-center py-4 text-slate-500">No tasks assigned to you.</td></tr>)}
+                {myTasks.length === 0 && (<tr><td colSpan="5" className="text-center py-4 text-slate-500 dark:text-slate-400">No tasks assigned to you.</td></tr>)}
               </tbody>
             </table>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">My Expenses</h2>
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold mb-4">My Expenses</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
+            <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+              <thead className="bg-slate-50 dark:bg-slate-700">
                 <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase">Reason</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Amount</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Reason</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Status</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-slate-200">
+              <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                 {myExpenses.map(exp => (
                   <tr key={exp.id}>
                     <td className="px-6 py-4 text-sm font-medium">₹{exp.amount.toFixed(2)}</td>
@@ -375,33 +375,33 @@ function TesterDashboard() {
                     <td className="px-6 py-4"><StatusBadge status={exp.status} /></td>
                   </tr>
                 ))}
-                {myExpenses.length === 0 && (<tr><td colSpan="4" className="text-center py-4 text-slate-500">You have not submitted any expenses.</td></tr>)}
+                {myExpenses.length === 0 && (<tr><td colSpan="4" className="text-center py-4 text-slate-500 dark:text-slate-400">No expenses submitted.</td></tr>)}
               </tbody>
             </table>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">My Leave Requests</h2>
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold mb-4">My Leave Requests</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
+            <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+              <thead className="bg-slate-50 dark:bg-slate-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Leave Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Reason</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Leave Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Reason</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Status</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-slate-200">
+              <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                 {leaveRequests.map(req => (
                   <tr key={req.id}>
-                    <td className="px-6 py-4 text-sm font-medium text-slate-800">{req.leaveDate}</td>
-                    <td className="px-6 py-4 text-sm text-slate-500 truncate max-w-sm">{req.reason}</td>
+                    <td className="px-6 py-4 text-sm font-medium">{req.leaveDate}</td>
+                    <td className="px-6 py-4 text-sm truncate max-w-sm">{req.reason}</td>
                     <td className="px-6 py-4"><StatusBadge status={req.status} /></td>
                   </tr>
                 ))}
                 {leaveRequests.length === 0 && (
-                    <tr><td colSpan="3" className="text-center py-4 text-slate-500">You have no leave requests.</td></tr>
+                    <tr><td colSpan="3" className="text-center py-4 text-slate-500 dark:text-slate-400">No leave requests.</td></tr>
                 )}
               </tbody>
             </table>
@@ -410,28 +410,28 @@ function TesterDashboard() {
       </main>
       
       {isModalOpen && (
-        <div className="fixed inset-0 z-20  bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg">
+        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6">Raise a New Token</h2>
             <form onSubmit={handleRaiseTokenSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-slate-700">Project Name</label>
-                <input type="text" value={projectName} onChange={(e) => setProjectName(e.target.value)} className="mt-1 block w-full p-2 border border-slate-300 rounded-md"/>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Project Name</label>
+                <input type="text" value={projectName} onChange={(e) => setProjectName(e.target.value)} className="mt-1 block w-full p-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md"/>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-slate-700">Assign to Developer</label>
-                 <select value={assignedDeveloper} onChange={(e) => setAssignedDeveloper(e.target.value)} className="mt-1 block w-full p-2 border border-slate-300 rounded-md">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Assign to Developer</label>
+                 <select value={assignedDeveloper} onChange={(e) => setAssignedDeveloper(e.target.value)} className="mt-1 block w-full p-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md">
                     <option value="" disabled>Select a developer</option>
                     {developers.map(dev => (<option key={dev.id} value={dev.email}>{dev.email}</option>))}
                  </select>
               </div>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-700">Description</label>
-                <textarea rows="4" value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 block w-full p-2 border border-slate-300 rounded-md"></textarea>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Description</label>
+                <textarea rows="4" value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 block w-full p-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md"></textarea>
               </div>
               {formError && <p className="text-red-500 text-sm mb-4">{formError}</p>}
               <div className="flex justify-end space-x-4">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-slate-200 font-semibold rounded-md">Cancel</button>
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-slate-200 dark:bg-slate-600 font-semibold rounded-md">Cancel</button>
                 <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-indigo-500 text-white font-semibold rounded-md disabled:bg-indigo-300">
                   {isSubmitting ? 'Submitting...' : 'Submit Token'}
                 </button>
@@ -442,21 +442,21 @@ function TesterDashboard() {
       )}
       
       {isLeaveModalOpen && (
-        <div className="fixed inset-0 z-20  bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg">
+        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6">Apply for Leave</h2>
             <form onSubmit={handleLeaveSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-slate-700">Date of Leave</label>
-                <input type="date" value={leaveDate} onChange={e => setLeaveDate(e.target.value)} className="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Date of Leave</label>
+                <input type="date" value={leaveDate} onChange={e => setLeaveDate(e.target.value)} className="mt-1 block w-full p-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md" />
               </div>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-700">Reason</label>
-                <textarea value={leaveReason} onChange={e => setLeaveReason(e.target.value)} rows="4" className="mt-1 block w-full p-2 border border-slate-300 rounded-md"></textarea>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Reason</label>
+                <textarea value={leaveReason} onChange={e => setLeaveReason(e.target.value)} rows="4" className="mt-1 block w-full p-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md"></textarea>
               </div>
               {leaveError && <p className="text-red-500 text-sm mb-4">{leaveError}</p>}
               <div className="flex justify-end space-x-4">
-                <button type="button" onClick={() => setIsLeaveModalOpen(false)} className="px-4 py-2 bg-slate-200 rounded-md">Cancel</button>
+                <button type="button" onClick={() => setIsLeaveModalOpen(false)} className="px-4 py-2 bg-slate-200 dark:bg-slate-600 rounded-md">Cancel</button>
                 <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:bg-indigo-300">
                   {isSubmitting ? 'Submitting...' : 'Submit Request'}
                 </button>
@@ -467,21 +467,21 @@ function TesterDashboard() {
       )}
 
       {isExpenseModalOpen && (
-        <div className="fixed inset-0 z-20  bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg">
+        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6">Submit Expense Claim</h2>
             <form onSubmit={handleSubmitExpense}>
                 <div className="mb-4">
-                    <label className="block text-sm font-medium text-slate-700">Amount (₹)</label>
-                    <input type="number" value={expenseAmount} onChange={e => setExpenseAmount(e.target.value)} className="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Amount (₹)</label>
+                    <input type="number" value={expenseAmount} onChange={e => setExpenseAmount(e.target.value)} className="mt-1 block w-full p-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md" />
                 </div>
                 <div className="mb-6">
-                    <label className="block text-sm font-medium text-slate-700">Reason / Description</label>
-                    <textarea value={expenseReason} onChange={e => setExpenseReason(e.target.value)} rows="4" className="mt-1 block w-full p-2 border border-slate-300 rounded-md"></textarea>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Reason / Description</label>
+                    <textarea value={expenseReason} onChange={e => setExpenseReason(e.target.value)} rows="4" className="mt-1 block w-full p-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md"></textarea>
                 </div>
                 {expenseError && <p className="text-red-500 text-sm mb-4">{expenseError}</p>}
                 <div className="flex justify-end space-x-4">
-                    <button type="button" onClick={() => setIsExpenseModalOpen(false)} className="px-4 py-2 bg-slate-200 rounded-md">Cancel</button>
+                    <button type="button" onClick={() => setIsExpenseModalOpen(false)} className="px-4 py-2 bg-slate-200 dark:bg-slate-600 rounded-md">Cancel</button>
                     <button type="submit" disabled={isSubmittingExpense} className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:bg-indigo-300">{isSubmittingExpense ? 'Submitting...' : 'Submit Expense'}</button>
                 </div>
             </form>
@@ -490,32 +490,32 @@ function TesterDashboard() {
       )}
 
       {isDetailsModalOpen && selectedToken && (
-        <div className="fixed inset-0 z-20  bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
-            <h2 className="text-xl font-bold mb-1">Token Details</h2>
-            <p className="font-mono text-sm text-slate-500 mb-4">{selectedToken.ticketId}</p>
+        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-2xl">
+            <h2 className="text-xl font-bold mb-1 text-slate-800 dark:text-slate-200">Token Details</h2>
+            <p className="font-mono text-sm text-slate-500 dark:text-slate-400 mb-4">{selectedToken.ticketId}</p>
             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-4">
                 <div>
-                    <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Description</h4>
-                    <p className="text-slate-800 whitespace-pre-wrap">{selectedToken.description}</p>
+                    <h4 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Description</h4>
+                    <p className="text-slate-800 dark:text-slate-300 whitespace-pre-wrap">{selectedToken.description}</p>
                 </div>
                 {selectedToken.resolutionNotes && (
                      <div>
-                        <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Resolution Notes</h4>
-                        <p className="text-slate-800 whitespace-pre-wrap">{selectedToken.resolutionNotes}</p>
+                        <h4 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Resolution Notes</h4>
+                        <p className="text-slate-800 dark:text-slate-300 whitespace-pre-wrap">{selectedToken.resolutionNotes}</p>
                     </div>
                 )}
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200">
-                    <div><h4 className="text-sm font-bold text-slate-500">Status</h4><StatusBadge status={selectedToken.status} /></div>
-                    <div><h4 className="text-sm font-bold text-slate-500">Project</h4><p>{selectedToken.projectName}</p></div>
-                    <div><h4 className="text-sm font-bold text-slate-500">Raised By</h4><p>{selectedToken.raisedBy}</p></div>
-                    <div><h4 className="text-sm font-bold text-slate-500">Assigned To</h4><p>{selectedToken.assignedDeveloper}</p></div>
-                    <div><h4 className="text-sm font-bold text-slate-500">Date Raised</h4><p>{selectedToken.createdAt.toDate().toLocaleString()}</p></div>
-                    {selectedToken.resolvedAt && <div><h4 className="text-sm font-bold text-slate-500">Date Resolved</h4><p>{selectedToken.resolvedAt.toDate().toLocaleString()}</p></div>}
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <div><h4 className="text-sm font-bold text-slate-500 dark:text-slate-400">Status</h4><StatusBadge status={selectedToken.status} /></div>
+                    <div><h4 className="text-sm font-bold text-slate-500 dark:text-slate-400">Project</h4><p>{selectedToken.projectName}</p></div>
+                    <div><h4 className="text-sm font-bold text-slate-500 dark:text-slate-400">Raised By</h4><p>{selectedToken.raisedBy}</p></div>
+                    <div><h4 className="text-sm font-bold text-slate-500 dark:text-slate-400">Assigned To</h4><p>{selectedToken.assignedDeveloper}</p></div>
+                    <div><h4 className="text-sm font-bold text-slate-500 dark:text-slate-400">Date Raised</h4><p>{selectedToken.createdAt.toDate().toLocaleString()}</p></div>
+                    {selectedToken.resolvedAt && <div><h4 className="text-sm font-bold text-slate-500 dark:text-slate-400">Date Resolved</h4><p>{selectedToken.resolvedAt.toDate().toLocaleString()}</p></div>}
                 </div>
             </div>
             <div className="mt-6 flex justify-end">
-                <button onClick={closeDetailsModal} className="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-md hover:bg-slate-300 transition-colors">Close</button>
+                <button onClick={closeDetailsModal} className="px-4 py-2 bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-semibold rounded-md hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors">Close</button>
             </div>
           </div>
         </div>
