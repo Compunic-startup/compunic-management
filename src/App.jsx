@@ -14,7 +14,7 @@ import HrDashboard from './page/HrDashboard';
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/compunic-management">
         <Routes>
           {/* --- Public Routes --- */}
           <Route path="/login" element={<LoginPage />} />

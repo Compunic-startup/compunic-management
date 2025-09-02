@@ -7,6 +7,7 @@ export default defineConfig({
     exclude: ['qrcode.react'], // Exclude qrcode.react from being optimized
   },
   plugins: [react(), tailwindcss(),],
+  base: '/compunic-management/',
   // server: {
   //   host: '0.0.0.0', // Allows access from other devices
   //   port: 5173, // Specify the port
