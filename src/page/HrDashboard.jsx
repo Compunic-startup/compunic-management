@@ -71,7 +71,8 @@ function HrDashboard() {
   const [isSubmittingExpense, setIsSubmittingExpense] = useState(false);
   const [inTime, setInTime] = useState('10:30');
   const [outTime, setOutTime] = useState('18:30');
-
+    const [isLeaveDetailsModalOpen, setIsLeaveDetailsModalOpen] = useState(false);
+  const [selectedLeaveRequest, setSelectedLeaveRequest] = useState(null);
   useEffect(() => {
     if (!currentUser) return;
     const employeesQuery = query(collection(db, "users"), where("role", "in", ["developer", "tester", "hr"]));
@@ -83,23 +84,16 @@ function HrDashboard() {
       setLoading(false);
     });
     
-    // --- THE FIX IS HERE: Simplified the query to fetch ALL pending requests ---
     const pendingRequestsQuery = query(collection(db, "leaveRequests"), where("status", "==", "Pending"));
     const unsubPending = onSnapshot(pendingRequestsQuery, (snapshot) => {
-        const allPending = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        // HR sees all requests EXCEPT their own.
-        setPendingLeaveRequests(allPending.filter(req => req.userId !== currentUser.uid));
+        setPendingLeaveRequests(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(req => req.userId !== currentUser.uid));
     });
-
     const myRequestsQuery = query(collection(db, "leaveRequests"), where("userId", "==", currentUser.uid), orderBy("appliedAt", "desc"));
     const unsubMyRequests = onSnapshot(myRequestsQuery, (snapshot) => setMyLeaveRequests(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
-
     const myTasksQuery = query(collection(db, "tasks"), where("assignedToId", "==", currentUser.uid), orderBy("deadline", "asc"));
     const unsubMyTasks = onSnapshot(myTasksQuery, (snapshot) => setMyTasks(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
-
     const allExpensesQuery = query(collection(db, "expenses"), orderBy("submittedAt", "desc"));
     const unsubAllExpenses = onSnapshot(allExpensesQuery, (snapshot) => setAllExpenses(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
-
     const myExpensesQuery = query(collection(db, "expenses"), where("userId", "==", currentUser.uid), orderBy("submittedAt", "desc"));
     const unsubMyExpenses = onSnapshot(myExpensesQuery, (snapshot) => setMyExpenses(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
 
@@ -127,9 +121,7 @@ function HrDashboard() {
     if (attendanceStatus === 'Present') {
         const [hours, minutes] = inTime.split(':').map(Number);
         const inTimeInMinutes = hours * 60 + minutes;
-        if (inTimeInMinutes > 680) {
-            finalStatus = 'Late';
-        }
+        if (inTimeInMinutes > 680) { finalStatus = 'Late'; }
     }
     if (finalStatus === 'Leave' && !attendanceReason.trim()) {
       setFormError('A reason is required for Leave status.'); return;
@@ -214,7 +206,15 @@ function HrDashboard() {
     await updateDoc(expenseRef, { status: newStatus });
     setIsExpenseDetailsModalOpen(false);
   };
+   const openLeaveDetailsModal = (request) => {
+    setSelectedLeaveRequest(request);
+    setIsLeaveDetailsModalOpen(true);
+  };
 
+  const closeLeaveDetailsModal = () => {
+    setIsLeaveDetailsModalOpen(false);
+    setSelectedLeaveRequest(null);
+  };
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10">
@@ -290,15 +290,19 @@ function HrDashboard() {
                     <th className="px-6 py-3 text-center text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+               <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                   {pendingLeaveRequests.map(req => (
-                    <tr key={req.id}>
+                    // --- 1. MODIFY THIS LINE ---
+                    <tr key={req.id} onClick={() => openLeaveDetailsModal(req)} className="hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer">
                       <td className="px-6 py-4 text-sm font-medium">{req.email}</td>
                       <td className="px-6 py-4 text-sm">{req.leaveDate}</td>
                       <td className="px-6 py-4 text-sm max-w-sm truncate">{req.reason}</td>
                       <td className="px-6 py-4 text-center space-x-2">
-                        <button onClick={() => handleLeaveRequestUpdate(req, 'Approved')} className="px-3 py-1 text-sm font-semibold text-green-700 bg-green-100 dark:bg-green-900/50 dark:text-green-300 rounded-md hover:bg-green-200 dark:hover:bg-green-900/80">Approve</button>
-                        <button onClick={() => handleLeaveRequestUpdate(req, 'Rejected')} className="px-3 py-1 text-sm font-semibold text-red-700 bg-red-100 dark:bg-red-900/50 dark:text-red-300 rounded-md hover:bg-red-200 dark:hover:bg-red-900/80">Reject</button>
+                        {/* --- 2. WRAP BUTTONS IN THIS DIV --- */}
+                        <div onClick={e => e.stopPropagation()}>
+                          <button onClick={() => handleLeaveRequestUpdate(req, 'Approved')} className="px-3 py-1 text-sm font-semibold text-green-700 bg-green-100 dark:bg-green-900/50 dark:text-green-300 rounded-md hover:bg-green-200 dark:hover:bg-green-900/80">Approve</button>
+                          <button onClick={() => handleLeaveRequestUpdate(req, 'Rejected')} className="px-3 py-1 text-sm font-semibold text-red-700 bg-red-100 dark:bg-red-900/50 dark:text-red-300 rounded-md hover:bg-red-200 dark:hover:bg-red-900/80">Reject</button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -420,9 +424,25 @@ function HrDashboard() {
           </div>
         </div>
       </main>
-      
+      {isLeaveDetailsModalOpen && selectedLeaveRequest && (
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
+            <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Leave Request Details</h2>
+            <div className="space-y-3 text-slate-800 dark:text-slate-300">
+              <p><span className="font-semibold">Employee:</span> {selectedLeaveRequest.email}</p>
+              <p><span className="font-semibold">Leave Date:</span> {selectedLeaveRequest.leaveDate}</p>
+              <p className="whitespace-pre-wrap"><span className="font-semibold">Reason:</span> {selectedLeaveRequest.reason}</p>
+              <p><span className="font-semibold">Applied:</span> {selectedLeaveRequest.appliedAt.toDate().toLocaleString()}</p>
+              <p className="flex items-center gap-2"><span className="font-semibold">Status:</span> <StatusBadge status={selectedLeaveRequest.status}/></p>
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button onClick={closeLeaveDetailsModal} className="px-4 py-2 bg-slate-200 dark:bg-slate-600 rounded-md">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
       {isMarkingModalOpen && (
-         <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+         <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-md">
                 <h2 className="text-xl font-bold mb-2 text-slate-800 dark:text-slate-200">Mark Attendance</h2>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">For {selectedEmployee?.email} on {selectedDate}</p>
@@ -475,7 +495,7 @@ function HrDashboard() {
       )}
 
       {isLeaveModalOpen && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6 text-slate-800 dark:text-slate-200">Apply for Leave</h2>
             <form onSubmit={handleLeaveSubmit}>
@@ -500,7 +520,7 @@ function HrDashboard() {
       )}
       
       {isExpenseModalOpen && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6 text-slate-800 dark:text-slate-200">Submit Expense Claim</h2>
             <form onSubmit={handleSubmitExpense}>
@@ -523,7 +543,7 @@ function HrDashboard() {
       )}
 
       {isExpenseDetailsModalOpen && selectedExpense && (
-        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Expense Details</h2>
             <div className="space-y-3 text-slate-800 dark:text-slate-300">
@@ -603,7 +623,7 @@ const AnalysisModal = ({ employee, onClose }) => {
     setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + delta, 1));
   };
   return (
-    <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-5xl">
         <div className="flex justify-between items-center mb-4">
           <div>
