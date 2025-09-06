@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { collection, onSnapshot, query, where, doc, setDoc, getDocs, Timestamp, updateDoc, addDoc, orderBy } from 'firebase/firestore';
 import { Chart } from 'primereact/chart';
 
-// --- THE FIX IS HERE: All Helper Components are now defined at the top, in the correct order ---
+// --- Helper Components ---
 const StatCard = ({ title, value, icon, color }) => (
   <div className={`bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm flex items-center space-x-3`}>
     <div className={`p-2 rounded-full ${color} text-white font-bold flex items-center justify-center h-8 w-8 text-xs`}>{icon}</div>
@@ -83,8 +83,13 @@ function HrDashboard() {
       setLoading(false);
     });
     
-    const pendingRequestsQuery = query(collection(db, "leaveRequests"), where("status", "==", "Pending"), where("role", "in", ["developer", "tester"]));
-    const unsubPending = onSnapshot(pendingRequestsQuery, (snapshot) => setPendingLeaveRequests(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
+    // --- THE FIX IS HERE: Simplified the query to fetch ALL pending requests ---
+    const pendingRequestsQuery = query(collection(db, "leaveRequests"), where("status", "==", "Pending"));
+    const unsubPending = onSnapshot(pendingRequestsQuery, (snapshot) => {
+        const allPending = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // HR sees all requests EXCEPT their own.
+        setPendingLeaveRequests(allPending.filter(req => req.userId !== currentUser.uid));
+    });
 
     const myRequestsQuery = query(collection(db, "leaveRequests"), where("userId", "==", currentUser.uid), orderBy("appliedAt", "desc"));
     const unsubMyRequests = onSnapshot(myRequestsQuery, (snapshot) => setMyLeaveRequests(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
@@ -417,7 +422,7 @@ function HrDashboard() {
       </main>
       
       {isMarkingModalOpen && (
-         <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+         <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-md">
                 <h2 className="text-xl font-bold mb-2 text-slate-800 dark:text-slate-200">Mark Attendance</h2>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">For {selectedEmployee?.email} on {selectedDate}</p>
@@ -468,9 +473,9 @@ function HrDashboard() {
           onClose={() => setIsAnalysisModalOpen(false)}
         />
       )}
-      
+
       {isLeaveModalOpen && (
-        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6 text-slate-800 dark:text-slate-200">Apply for Leave</h2>
             <form onSubmit={handleLeaveSubmit}>
@@ -495,7 +500,7 @@ function HrDashboard() {
       )}
       
       {isExpenseModalOpen && (
-        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-6 text-slate-800 dark:text-slate-200">Submit Expense Claim</h2>
             <form onSubmit={handleSubmitExpense}>
@@ -518,7 +523,7 @@ function HrDashboard() {
       )}
 
       {isExpenseDetailsModalOpen && selectedExpense && (
-        <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-lg">
             <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">Expense Details</h2>
             <div className="space-y-3 text-slate-800 dark:text-slate-300">
@@ -598,7 +603,7 @@ const AnalysisModal = ({ employee, onClose }) => {
     setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + delta, 1));
   };
   return (
-    <div className="fixed inset-0 z-20 bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-20 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-xl w-full max-w-5xl">
         <div className="flex justify-between items-center mb-4">
           <div>
